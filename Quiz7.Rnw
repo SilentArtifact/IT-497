@@ -1,0 +1,28 @@
+\documentclass{article}
+
+\begin{document}
+
+<<chunk1,echo=FALSE>>=
+library(XML)
+
+urlAddress="http://en.wikipedia.org/wiki/Ebola_virus_epidemic_in_West_Africa"
+
+WikiTable <- readHTMLTable(doc=urlAddress)
+
+EbolaData <- WikiTable[[1]][-c(1,2,3,4), -c(1,4) ]
+
+names(EbolaData) <- c("Cases","Deaths")
+row.names(EbolaData) <- c("Liberia","Sierra Leone","Guinea","Nigeria","Mali","United States","United Kingdom","Senegal","Spain","Total")
+
+TotalCases <- EbolaData[10, 1]
+TotalDeaths <- EbolaData[10, 2]
+USCases <- EbolaData[6, 1]
+USDeaths <- EbolaData[6, 2]
+@
+
+\SweaveOpts{concordance=TRUE}
+
+The World Health Organization (WHO) and respective governments have reported a total of \Sexpr{TotalCases} suspected cases and \Sexpr{TotalDeaths} deaths, though the WHO believes that this substantially understates the magnitude of the outbreak. In the United States there has been \Sexpr{USCases} reported cases and \Sexpr{USDeaths} deaths.  
+
+
+\end{document}
