@@ -196,6 +196,7 @@ aveAudienceRScore <- round(sum(audiencesRScores) / noRFilms, digits=2)
 aveCriticRScore <- round(sum(criticsRScores) / noRFilms, digits=2)
 @
 \emph{Code Chunk 7: In this code chunk, we analyze the data, finding our necessary averages.}
+
 From the data here, we can see that the average critic's review of G-rated movies as a whole is \Sexpr
 {aveCriticGScore}\%, and R-rated movies as a whole, \Sexpr{aveCriticRScore}\%. The average audience's 
 review of G-rated movies as a whole is \Sexpr{aveAudienceGScore}\%, and R-rated movies as a whole, 
@@ -207,19 +208,14 @@ Once we have the data that we need, and have interpreted it in order to discover
 we can take that data and display it in a more "reader-friendly" format, namely, in graph form. There 
 are a large, large variety of graphs that R can produce; we've chosen two, geom_bar and geom_line. 
 
-<<calcFinalData, echo=FALSE, tidy=TRUE>>=
+<<calcFinalData, echo=TRUE, tidy=TRUE>>=
 gScores <- c(aveCriticGScore, aveAudienceGScore)
 rScores <- c(aveCriticRScore, aveAudienceRScore)
 finalScores <- rbind (gScores, rScores)
 rownames(finalScores) <- c("G", "R")
 colnames(finalScores) <- c("Critic", "Audience")
 @
-
-
-
-<<showFinalData, echo=FALSE, tidy=TRUE>>=
-finalScores
-@
+\emph{Code Chunk 8: In this code chunk, we once again parse apart the data, in order to make it easier to plot.}
 
 <<showTable1, echo=FALSE, tidy=TRUE>>=
 library(ggplot2)
