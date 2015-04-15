@@ -88,7 +88,6 @@ their MPAA ratings. To do this, we'll use the "DVD Current Releases" request.
 <<aquireData, echo=TRUE, tidy=TRUE>>=
 # Code Chunk 1: Aquire Data
 library(jsonlite)
-library(plyr) 
 
 # fromJSON allows us to use the Rotten Tomatoes API call
 rawData <- jsonlite::fromJSON("http://api.rottentomatoes.com/api/public/v1.0/lists/dvds/current_releases.json?page_limit=50&page=1&country=us&apikey=pv8e8c9wkgkuwpsbpk72b8tg")
@@ -215,7 +214,6 @@ colnames(finalScores) <- c("Critic", "Audience")
 
 <<showTable1, echo=FALSE, tidy=TRUE>>=
 library(ggplot2)
-library(reshape2)
 
 gAudience <- c("G", "Audience", aveAudienceGScore)
 rAudience <- c("R", "Audience", aveAudienceRScore)
@@ -234,7 +232,6 @@ Y, grouped by the "rater", or group that did the rating.
 
 <<showTable2, echo=FALSE, tidy=TRUE>>=
 library(ggplot2)
-library(reshape2)
 
 gAudience <- c("G", "Audience", aveAudienceGScore)
 rAudience <- c("R", "Audience", aveAudienceRScore)
