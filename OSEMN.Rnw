@@ -1,6 +1,5 @@
 \documentclass{article}
 \usepackage{hyperref}
-
 \usepackage{color}
 \usepackage{xcolor}
 \usepackage{listings}
@@ -14,6 +13,7 @@
 \captionsetup[lstlisting]{format=listing,labelfont=white,textfont=white}
 
 \begin{document}
+\SweaveOpts{concordance=TRUE}
 \lstset{breaklines=true} % break long lines
 <<setup, include=FALSE>>=
 render_listings()
