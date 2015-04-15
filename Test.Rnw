@@ -1,0 +1,27 @@
+\documentclass{article}
+
+\begin{document}
+\SweaveOpts{concordance=TRUE}
+
+Here is your code
+
+\lstset{breaklines=true} % break long lines
+<<setup, include=FALSE>>=
+render_listings()
+@
+
+
+
+<<q1, include=F >>=
+library(jsonlite)
+library(utils)
+@
+
+<<q2, include=T >>=
+reviews <- fromJSON("http://api.rottentomatoes.com/api/public/v1.0/lists/movies/in_theaters.json?page_limit=50&page=1&country=us&apikey=pv8e8c9wkgkuwpsbpk72b8tg")
+@
+
+
+
+
+\end{document}

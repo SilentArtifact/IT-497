@@ -1,19 +1,4 @@
-\documentclass{article}\usepackage[]{graphicx}\usepackage[]{color}
-%% maxwidth is the original width if it is less than linewidth
-%% otherwise use linewidth (to make sure the graphics do not exceed the margin)
-\makeatletter
-\def\maxwidth{ %
-  \ifdim\Gin@nat@width>\linewidth
-    \linewidth
-  \else
-    \Gin@nat@width
-  \fi
-}
-\makeatother
-
-\usepackage{Sweavel}
-
-
+\documentclass{article}
 \usepackage{hyperref}
 
 \usepackage{color}
@@ -28,9 +13,9 @@
 }
 \captionsetup[lstlisting]{format=listing,labelfont=white,textfont=white}
 
+\usepackage{Sweave}
 \begin{document}
-\SweaveOpts{concordance=TRUE}
-\lstset{breaklines=true} % break long lines
+\input{OSEMN-concordance}
 
 
 \title{Rotten Tomatoes API}
@@ -51,42 +36,24 @@ These ratings are given based on the content of the film, as well as general plo
 Like many sites that offer an API, Rotten Tomatoes requires a new prospective user to register with them first. To do this, you will need to visit \href{http://developer.rottentomatoes.com/member/register}{the API registration page}, and provide some information, specifically, your information, what you intend to use the API for, and how much use you expect it to get. Rotten Tomatoes gathers this information so that they can determine how much load your API key might add to their service.
 
 Once you've completed registration, you'll be sent a confirmation email. Once the link within is accepted, you'll be emailed an API key. An API key, or application programming interface key, is a unique string of characters that's used by a program or interface to identify who or what is calling on it for information. With this key, Rotten Tomatoes' interface will provide you with the information that you ask for. For this example, our key is as follows:
-\begin{lstlisting}[label=APIKey,caption=API Key]
+
   pv8e8c9wkgkuwpsbpk72b8tg
-\end{lstlisting}
+
 We'll use this key in every interaction with the Rotten Tomatoes API. Make a note of your key, and do not lose it!
 
 \section*{Obtaining the Data}
 Once you've aquired an API key, you can use it, along with a bit of R code, to obtain the information you're looking for. The Rotten Tomatoes API will, unfortunately, only provide 50 "pages" of information, which generally means 50 films/TV shows from a given query. To make a query using R, you'll need to use the R package "jsonlite", and the command "fromJSON". 
-
-The API documentation details several calls that can be made of their API, each pulling specific information, and each with various parameters that can be used to customize the call. For example, if you wanted to pull any information Rotten Tomatoes had on Toy Story 3, you would use the following API call:
-\begin{lstlisting}[label=ToyStory3Info,caption=API Call]
-  http://api.rottentomatoes.com/api/public/v1.0/movies/770672122.json?apikey=
-\end{lstlisting}
-When the API key is added to this call, it completes it, creating this:
-\begin{lstlisting}[label=ToyStory3Info,caption=API Request]
-  http://api.rottentomatoes.com/api/public/v1.0/movies/770672122.json?apikey=pv8e8c9wkgkuwpsbpk72b8tg
-\end{lstlisting}
+The API documentation details several calls that can be made of their API, each pulling specific information, and each with various parameters that can be used to customize the call. For example, if you wanted to pull any information Rotten Tomatoes had on Toy Story 3, you would use the following API call: http://api.rottentomatoes.com/api/public/v1.0/movies/770672122.json?apikey=
+When the API key is added to this call, it completes it, creating this: http://api.rottentomatoes.com/api/public/v1.0/movies/770672122.json?apikey=pv8e8c9wkgkuwpsbpk72b8tg
 In the case of our example, we want to pull the ratings of movies that are currently out, alongside their MPAA ratings. To do this, we'll use the "DVD Current Releases" request.
 
 \begin{Schunk}
 \begin{Sinput}
-# Code Chunk 1: Aquire Data
-library(jsonlite)
-\end{Sinput}
-\begin{Soutput}
-
-Attaching package: 'jsonlite'
-
-The following object is masked from 'package:utils':
-
-    View
-\end{Soutput}
-\begin{Sinput}
-library(plyr)
-
-# fromJSON allows us to use the Rotten Tomatoes API call
-rawData <- jsonlite::fromJSON("http://api.rottentomatoes.com/api/public/v1.0/lists/dvds/current_releases.json?page_limit=50&page=1&country=us&apikey=pv8e8c9wkgkuwpsbpk72b8tg")
+> # Code Chunk 1: Aquire Data
+> library(jsonlite)
+> library(plyr) 
+> # fromJSON allows us to use the Rotten Tomatoes API call
+> rawData <- jsonlite::fromJSON("http://api.rottentomatoes.com/api/public/v1.0/lists/dvds/current_releases.json?page_limit=50&page=1&country=us&apikey=pv8e8c9wkgkuwpsbpk72b8tg")
 \end{Sinput}
 \end{Schunk}
 \emph{Code Chunk 1: Aquiring Data using fromJSON}
@@ -98,9 +65,9 @@ Now that we've got our data, we'll "scrub" it; scrubbing is a term for parsing, 
 
 \begin{Schunk}
 \begin{Sinput}
-# Code Chunk 2: Begin Cleaning
-mpaa.rating <- rawData[[2]][[4]]
-scores <- rawData[[2]][[8]]
+> # Code Chunk 2: Begin Cleaning
+> mpaa.rating <- rawData[[2]][[4]]
+> scores <- rawData[[2]][[8]]           
 \end{Sinput}
 \end{Schunk}
 \emph{Code Chunk 2: We begin to clean the data, removing only the variables we desire.}
@@ -109,25 +76,24 @@ Now, it is worth noting that this list is not simply a two-dimensional construct
 
 \begin{Schunk}
 \begin{Sinput}
-# Code Chunk 3: Continuing Cleaning
-critics.score <- scores[, 2]
-audiences.score <- scores[, 4]
-
-# Combine the three objects back into a new data frame.
-reviews <- data.frame(mpaa.rating, critics.score, audiences.score)
+> # Code Chunk 3: Continuing Cleaning
+> critics.score <- scores[,2]
+> audiences.score <- scores[,4]
+> # Combine the three objects back into a new data frame.
+> reviews <- data.frame(mpaa.rating, critics.score, audiences.score)
 \end{Sinput}
 \end{Schunk}
-\emph{# Code Chunk 3: Noting the multi-dimensional scores field, we dismantle it and build a new data.frame object.}
+\emph{Code Chunk 3: Noting the multi-dimensional scores field, we dismantle it and build a new data.frame object.}
 
 Now that we have the specific variables we need in a friendly format, we can subset them further to include only G- and R-rated films. This will be done using the subset method:
 
 \begin{Schunk}
 \begin{Sinput}
-# Code Chunk 4: Parsing Irrelevant Data
-reviews <- subset(reviews, mpaa.rating == "G" | mpaa.rating == "R")
+> # Code Chunk 4: Parsing Irrelevant Data
+> reviews <- subset(reviews, mpaa.rating == "G" | mpaa.rating == "R")
 \end{Sinput}
 \end{Schunk}
-\emph{# Code Chunk 4: We use subset to remove all films that aren't either G- or R- rated.}
+\emph{Code Chunk 4: We use subset to remove all films that aren't either G- or R- rated.}
 
 At this point, we have only the data we need; the ratings of G- and R-rated films. From here, we can begin to interpret and explore the data.
 
@@ -160,21 +126,21 @@ At this point, we have only the data we need; the ratings of G- and R-rated film
 49           R            63              52
 \end{Soutput}
 \end{Schunk}
-\emph{# Code Chunk 5: Our data so far...}
+\emph{Code Chunk 5: Our data so far...}
 
 \section*{Exploring the Data}
 Now that we have the data we need, we can begin to examine and work at it. We'll start with some basic tests.
 
 \begin{Schunk}
 \begin{Sinput}
-# Code Chunk 6: Examining Our Data
-class(reviews)
+> #Code Chunk 6: Examining Our Data
+> class(reviews)
 \end{Sinput}
 \begin{Soutput}
 [1] "data.frame"
 \end{Soutput}
 \begin{Sinput}
-str(reviews)
+> str(reviews)
 \end{Sinput}
 \begin{Soutput}
 'data.frame':	24 obs. of  3 variables:
@@ -183,7 +149,7 @@ str(reviews)
  $ audiences.score: int  86 54 74 72 70 77 50 79 50 52 ...
 \end{Soutput}
 \begin{Sinput}
-summary(reviews)
+> summary(reviews)
 \end{Sinput}
 \begin{Soutput}
   mpaa.rating critics.score   audiences.score
@@ -195,9 +161,9 @@ summary(reviews)
               Max.   :97.00   Max.   :95.00  
 \end{Soutput}
 \end{Schunk}
-\emph{# Code Chunk 6: Using the class, str, and summary methods, we can get insights into our data.}
+\emph{Code Chunk 6: Using the class, str, and summary methods, we can get insights into our data.}
 
-We can see that we've a single data frame object, reviews, with three columns, mpaa.rating, critics.score, and audiences.score, and 24 rows. The mpaa.rating column is a factor that uses string data, with four levels: "G", "PG", "PG-13", and "R", with no minimum. There are 23 R-rated films, and 1 G-rated film, which is an unfortunate ratio, but due to limitations in the API, it is the most we're going to come up with until more G-rated movies make it big.
+We can see that we've a single data frame object, reviews, with three columns, mpaa.rating, critics.score, and audiences.score, and 24 rows. The mpaa.rating column is a factor that uses string data, with four levels: G, PG, PG-13, and R, with no minimum. There are 23 R-rated films, and 1 G-rated film, which is an unfortunate ratio, but due to limitations in the API, it is the most we're going to come up with until more G-rated movies make it big.
 
 Both critics.score and audiences.score are ints, but they deviate from there. The column critics.score has a minimum of 6, a median of 81, and a max of 97. The column audiences.score have a minimum of 28, a mean of 64.83, and a maximum of 95. 
 
@@ -205,30 +171,25 @@ It's at this point that we fully flesh out our question; which have better ratin
 
 \begin{Schunk}
 \begin{Sinput}
-# Code Chunk 7: Analyzing the Data
-noGFilms <- length(reviews[which(reviews$mpaa.rating == "G"), 2])
-noRFilms <- length(reviews[which(reviews$mpaa.rating == "R"), 2])
-
-audiencesGScore <- reviews[which(reviews$mpaa.rating == "G"), 3]
-audiencesRScores <- reviews[which(reviews$mpaa.rating == "R"), 3]
-
-criticsGScores <- reviews[which(reviews$mpaa.rating == "G"), 2]
-criticsRScores <- reviews[which(reviews$mpaa.rating == "R"), 2]
-
-aveAudienceGScore <- round(sum(audiencesGScore)/noGFilms, digits = 2)
-aveCriticGScore <- round(sum(criticsGScores)/noGFilms, digits = 2)
-
-aveAudienceRScore <- round(sum(audiencesRScores)/noRFilms, digits = 2)
-aveCriticRScore <- round(sum(criticsRScores)/noRFilms, digits = 2)
+> #Code Chunk 7: Analyzing the Data
+> noGFilms <- length(reviews[which(reviews$mpaa.rating=="G"),2])
+> noRFilms <- length(reviews[which(reviews$mpaa.rating=="R"),2])
+> audiencesGScore <- reviews[which(reviews$mpaa.rating=="G"),3]
+> audiencesRScores <- reviews[which(reviews$mpaa.rating=="R"),3]
+> criticsGScores <- reviews[which(reviews$mpaa.rating=="G"),2]
+> criticsRScores <- reviews[which(reviews$mpaa.rating=="R"),2]
+> aveAudienceGScore <- round(sum(audiencesGScore) / noGFilms, digits=2)
+> aveCriticGScore <- round(sum(criticsGScores) / noGFilms, digits=2)
+> aveAudienceRScore <- round(sum(audiencesRScores) / noRFilms, digits=2)
+> aveCriticRScore <- round(sum(criticsRScores) / noRFilms, digits=2)
 \end{Sinput}
 \end{Schunk}
-\emph{# Code Chunk 7: In this code chunk, we analyze the data, finding our necessary averages.}
+\emph{Code Chunk 7: In this code chunk, we analyze the data, finding our necessary averages.}
 
 From the data here, we can see that the average critic's review of G-rated movies as a whole is 80\%, and R-rated movies as a whole, 70.96\%. The average audience's review of G-rated movies as a whole is 70\%, and R-rated movies as a whole, 64.61\%. 
 
 \section*{Graphing the Data}
 Once we have the data that we need, and have interpreted it in order to discover what we wished to know, we can take that data and display it in a more "reader-friendly" format, namely, in graph form. There are a large, large variety of graphs that R can produce; we've chosen two, geom_bar and geom_line. 
-
 
 
 \begin{Schunk}
@@ -239,14 +200,8 @@ R  70.96    64.61
 \end{Soutput}
 \end{Schunk}
 
-\begin{Schunk}
-
-\includegraphics[width=\maxwidth]{figure/showTable1-1} \end{Schunk}
 Figure 1: Figure 1.1 is a bar graph showing the MPAA rating along the X axis, with the score along the Y, grouped by the "rater", or group that did the rating.
 
-\begin{Schunk}
-
-\includegraphics[width=\maxwidth]{figure/showTable2-1} \end{Schunk}
 Figure 2: Figure 1.2 is a line graph showing the MPAA rating along the X axis, with the score along the Y, grouped by the "rater", or group that did the rating.
 
 Both graphs show rather clearly that the overall ratings of G-rated movies are slightly higher than that of R-rated ones. 
