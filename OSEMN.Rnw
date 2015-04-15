@@ -91,11 +91,7 @@ library(jsonlite)
 library(plyr) 
 
 # fromJSON allows us to use the Rotten Tomatoes API call
-rawData <- jsonlite::fromJSON
-
-("http://api.rottentomatoes.com/api/public/v1.0/lists/dvds/current_releases.json?
-
-page_limit=50&page=1&country=us&apikey=pv8e8c9wkgkuwpsbpk72b8tg")
+rawData <- jsonlite::fromJSON("http://api.rottentomatoes.com/api/public/v1.0/lists/dvds/current_releases.json?page_limit=50&page=1&country=us&apikey=pv8e8c9wkgkuwpsbpk72b8tg")
 @
 \emph{Code Chunk 1: Aquiring Data using fromJSON}
 
@@ -254,6 +250,7 @@ ggplot(scores, aes(Rating, Score,colour=Rater)) +
 @
 Figure 2: Figure 1.2 is a line graph showing the MPAA rating along the X axis, with the score along the 
 Y, grouped by the "rater", or group that did the rating.
+
 Both graphs show rather clearly that the overall ratings of G-rated movies are slightly higher than that 
 of R-rated ones. 
 
