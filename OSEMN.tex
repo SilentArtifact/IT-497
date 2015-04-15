@@ -1,0 +1,22 @@
+\documentclass{article}
+\usepackage{hyperref}
+
+\usepackage{color}
+\usepackage{xcolor}
+\usepackage{listings}
+
+\usepackage{caption}
+\DeclareCaptionFont{white}{\color{white}}
+\DeclareCaptionFormat{listing}{\colorbox{gray}{\parbox{\textwidth}{#1#2#3}}}
+\lstset{ 
+  breaklines=true
+}
+\captionsetup[lstlisting]{format=listing,labelfont=white,textfont=white}
+
+\usepackage{Sweave}
+\begin{document}
+\input{OSEMN-concordance}
+\lstset{breaklines=true} % break long lines
+\begin{Schunk}
+\begin{Sinput}
+> render_listings()
