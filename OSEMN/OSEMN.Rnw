@@ -28,56 +28,34 @@ render_listings()
 
 \section*{Introduction}
 Rotten Tomatoes is one of the largest and most well-regarded film review sites online, with only one 
-
 other major challenger, Metacritic. Rotten Tomatoes reviews film with their own unique rating scale, 
-
 "Fresh", represented by a ripe, red tomato, for good films, and "rotten", a green, splat-mark, for poor 
-
 films. It garners nearly 26,000,000 unique page-views a month, and is one of the top 250 U.S. websites. 
-
 It hosts a glut of data on films, actors, critics, as well as having trailers and local theater 
-
 information.
 
 Rotten Tomatoes, like many other websites, has offered their film information to the general public via 
-
 their open API. This tutorial will walk you through the process of obtaining access to this API and 
-
 using it, in this case to determine the average ratings of G- and R-rated current films.
-
 Movies in the US all have guidance ratings, put in place using the Motion Picture Association of 
-
 America's own system. This system rates a film on a scale, starting with "G", General Audiences, to 
-
 "PG", Parental Guidance Suggested, to "PG-13", Parents Strongly Cautioned, to "R", Restricted, and 
-
 ending with "NC-17", Adults Only. 
 
 These ratings are given based on the content of the film, as well as general plot and theme; films that 
-
 are graphically violent, or sexual will be placed much higher on the scale than those that make efforts 
-
 to reduce harsh visuals. Films that work to create a great sense of fear or terror will also find 
-
 themselves placed higher on the scale, to warn parents against allowing younger children to view them.
 
 \section*{Getting Access to the API}
 Like many sites that offer an API, Rotten Tomatoes requires a new prospective user to register with them 
-
 first. To do this, you will need to visit \href{http://developer.rottentomatoes.com/member/register}{the 
-
 API registration page}, and provide some information, specifically, your information, what you intend to 
-
 use the API for, and how much use you expect it to get. Rotten Tomatoes gathers this information so that 
-
 they can determine how much load your API key might add to their service.
-
 Once you've completed registration, you'll be sent a confirmation email. Once the link within is 
-
 accepted, you'll be emailed an API key. An API key, or application programming interface key, is a 
-
 unique string of characters that's used by a program or interface to identify who or what is calling on 
-
 it for information. With this key, Rotten Tomatoes' interface will provide you with the information that 
 
 you ask for. For this example, our key is as follows:
@@ -85,24 +63,17 @@ you ask for. For this example, our key is as follows:
   pv8e8c9wkgkuwpsbpk72b8tg
 \end{lstlisting}
 We'll use this key in every interaction with the Rotten Tomatoes API. Make a note of your key, and do 
-
 not lose it!
 
 \section*{Obtaining the Data}
 Once you've aquired an API key, you can use it, along with a bit of R code, to obtain the information 
-
 you're looking for. The Rotten Tomatoes API will, unfortunately, only provide 50 "pages" of information, 
-
 which generally means 50 films/TV shows from a given query. To make a query using R, you'll need to use 
-
 the R package "jsonlite", and the command "fromJSON". 
 
 The API documentation details several calls that can be made of their API, each pulling specific 
-
 information, and each with various parameters that can be used to customize the call. For example, if 
-
 you wanted to pull any information Rotten Tomatoes had on Toy Story 3, you would use the following API 
-
 call:
 \begin{lstlisting}[label=ToyStory3Info,caption=API Call]
   http://api.rottentomatoes.com/api/public/v1.0/movies/770672122.json?apikey=
@@ -112,7 +83,6 @@ When the API key is added to this call, it completes it, creating this:
   http://api.rottentomatoes.com/api/public/v1.0/movies/770672122.json?apikey=pv8e8c9wkgkuwpsbpk72b8tg
 \end{lstlisting}
 In the case of our example, we want to pull the ratings of movies that are currently out, alongside 
-
 their MPAA ratings. To do this, we'll use the "DVD Current Releases" request.
 
 <<aquireData, echo=TRUE, tidy=TRUE>>=
@@ -130,22 +100,15 @@ page_limit=50&page=1&country=us&apikey=pv8e8c9wkgkuwpsbpk72b8tg")
 \emph{Code Chunk 1: Aquiring Data using fromJSON}
 
 This gets us the data we need, a complete listing of all  and the data that Rotten Tomatoes offers on 
-
 them. It brings them down into a list object, which we'll work with. For our example, we'll want to 
-
 parse out specific information to work with. We'll do that in the next section.
 
 \section*{Scrubbing the Data}
 Now that we've got our data, we'll "scrub" it; scrubbing is a term for parsing, or formatting the raw 
-
 data so that it becomes useful to our purposes. In this case, we want to obtain three specific variables 
-
 from the data: the MPAA rating, the critics' score, and finally, the audiences' score. These three 
-
 variables will let us group films by rating, and then determine how both critics and audiences rated 
-
 them. We'll start by pulling those variables from the list, by column number. The columns can be viewed 
-
 quite easily by using the "View" command.
 
 <<removeVariables, echo=TRUE, tidy=TRUE>>=
@@ -156,11 +119,8 @@ scores <- rawData[[2]][[8]]
 \emph{Code Chunk 2: We begin to clean the data, removing only the variables we desire.}
 
 Now, it is worth noting that this list is not simply a two-dimensional construct; it is a multi-
-
 dimensional one. Our variable, scores, now contains a data frame, with all the relevant rating 
-
 information in it. We only need numeric values for our exercise, so we'll take them and build a new data 
-
 frame.
 
 <<parseRatings, echo=TRUE, tidy=TRUE>>=
@@ -174,9 +134,7 @@ reviews <- data.frame(mpaa.rating, critics.score, audiences.score)
 \emph{Code Chunk 3: Noting the multi-dimensional scores field, we dismantle it and build a new 
 
 data.frame object.}
-
 Now that we have the specific variables we need in a friendly format, we can subset them further to 
-
 include only G- and R-rated films. This will be done using the subset method:
 
 <<subsetRows, echo=TRUE, tidy=TRUE>>=
@@ -184,9 +142,7 @@ include only G- and R-rated films. This will be done using the subset method:
 reviews <- subset(reviews, mpaa.rating == "G" | mpaa.rating == "R")
 @
 \emph{Code Chunk 4: We use subset to remove all films that aren't either G- or R- rated.}
-
 At this point, we have only the data we need; the ratings of G- and R-rated films. From here, we can 
-
 begin to interpret and explore the data.
 
 <<showTableandGraph, echo=FALSE, tidy=TRUE>>=
@@ -197,7 +153,6 @@ reviews
 
 \section*{Exploring the Data}
 Now that we have the data we need, we can begin to examine and work at it. We'll start with some basic 
-
 tests.
 
 <<exploreData, echo=TRUE, tidy=TRUE>>=
@@ -211,25 +166,16 @@ summary(reviews)
 \emph{Code Chunk 6: Using the class, str, and summary methods, we can get insights into our data.}
 
 We can see that we've a single data frame object, reviews, with three columns, mpaa.rating, 
-
 critics.score, and audiences.score, and 24 rows. The mpaa.rating column is a factor that uses string 
-
 data, with four levels: "G", "PG", "PG-13", and "R", with no minimum. There are 23 R-rated films, and 1 
-
 G-rated film, which is an unfortunate ratio, but due to limitations in the API, it is the most we're 
-
 going to come up with until more G-rated movies make it big.
 
 Both critics.score and audiences.score are ints, but they deviate from there. The column critics.score 
-
 has a minimum of 6, a median of 81, and a max of 97. The column audiences.score have a minimum of 28, a 
-
 mean of 64.83, and a maximum of 95. 
-
 It's at this point that we fully flesh out our question; which have better ratings, G-rated or R-rated 
-
 films. To do this, we will take the average of both critics' and audiences' scores, for both G- and R-
-
 rated films, and compare them.
 
 <<getAverages, echo=TRUE, tidy=TRUE>>=
@@ -250,20 +196,15 @@ aveAudienceRScore <- round(sum(audiencesRScores) / noRFilms, digits=2)
 aveCriticRScore <- round(sum(criticsRScores) / noRFilms, digits=2)
 @
 \emph{Code Chunk 7: In this code chunk, we analyze the data, finding our necessary averages.}
-
 From the data here, we can see that the average critic's review of G-rated movies as a whole is \Sexpr
-
 {aveCriticGScore}\%, and R-rated movies as a whole, \Sexpr{aveCriticRScore}\%. The average audience's 
-
 review of G-rated movies as a whole is \Sexpr{aveAudienceGScore}\%, and R-rated movies as a whole, 
 
 \Sexpr{aveAudienceRScore}\%. 
 
 \section*{Graphing the Data}
 Once we have the data that we need, and have interpreted it in order to discover what we wished to know, 
-
 we can take that data and display it in a more "reader-friendly" format, namely, in graph form. There 
-
 are a large, large variety of graphs that R can produce; we've chosen two, geom_bar and geom_line. 
 
 <<calcFinalData, echo=FALSE, tidy=TRUE>>=
@@ -273,6 +214,8 @@ finalScores <- rbind (gScores, rScores)
 rownames(finalScores) <- c("G", "R")
 colnames(finalScores) <- c("Critic", "Audience")
 @
+
+
 
 <<showFinalData, echo=FALSE, tidy=TRUE>>=
 finalScores
