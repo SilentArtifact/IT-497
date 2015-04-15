@@ -14,6 +14,7 @@
 
 \begin{document}
 \SweaveOpts{concordance=TRUE}
+
 \lstset{breaklines=true} % break long lines
 <<setup, include=FALSE>>=
 render_listings()
