@@ -163,6 +163,7 @@ From the data here, we can see that the average critic's review of G-rated movie
 Once we have the data that we need, and have interpreted it in order to discover what we wished to know, we can take that data and display it in a more "reader-friendly" format, namely, in graph form. There are a large, large variety of graphs that R can produce; we've chosen two, geom_bar and geom_line. 
 
 <<calcFinalData, echo=TRUE, tidy=TRUE>>=
+# Code Chunk 8 - Parsing for Graphs
 gScores <- c(aveCriticG, aveAudienceG)
 rScores <- c(aveCriticR, aveAudienceR)
 finalScores <- rbind (gScores, rScores)
@@ -204,7 +205,7 @@ ggplot(scores, aes(Rating, Score,colour=Rater)) +
 @
 Figure 2: Figure 1.2 is a line graph showing the MPAA rating along the X axis, with the score along the Y, grouped by the "rater", or group that did the rating.
 
-Both graphs show rather clearly that the overall ratings of G-rated movies are slightly higher than that of R-rated ones. 
+Both graphs show rather clearly that the overall ratings of G-rated movies are slightly higher than that of R-rated ones, in both critic's estimation and audience opinions.
 
 \end{document}
 
