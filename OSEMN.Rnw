@@ -63,7 +63,7 @@ library (plyr)
 URL <-"http://api.rottentomatoes.com/api/public/v1.0/movies.json?&apikey=pv8e8c9wkgkuwpsbpk72b8tg&q=a&page_limit=50&page=1"
 
 # This if statement exists to keep from needlessly running, if it's been run before.
-if(!file.exists("rotten.csv")){
+if(!file.exists("rawData.csv")){
   for (i in  1:20){
     # This is the actual API call.
     URLpage <-paste0(URL, i)
@@ -85,7 +85,7 @@ if(!file.exists("rotten.csv")){
     }
     
     # Here, we export the dataset to a file, and append subsequent sets of data.
-    write.table(df.xyz, file="rotten.csv", col.names=F, row.names=F, append=T, sep=",")
+    write.table(df.xyz, file="rawData.csv", col.names=F, row.names=F, append=T, sep=",")
     Sys.sleep(2) 
   }
   colnames(data) <- c("Title","MPAA_Rating","Audience_Score","Critics_Score")
